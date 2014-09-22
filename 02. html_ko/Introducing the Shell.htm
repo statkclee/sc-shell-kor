@@ -2,7 +2,7 @@
 <!-- saved from url=(0059)http://software-carpentry.org/v5/novice/shell/00-intro.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-      <title>Introducing the Shell</title>
+      <title>쉘(Shell) 소개</title>
     
     <link rel="shortcut icon" type="image/x-icon" href="http://software-carpentry.org/v5/favicon.ico">
 <link href="http://software-carpentry.org/v5/css/bootstrap/bootstrap.css" rel="stylesheet">
@@ -22,7 +22,7 @@
   </head>
   <body>
     <div class="container">
-      <span id="github-ribbon"><a href="https://github.com/swcarpentry/bc">Fork me on GitHub</a></span>
+      <span id="github-ribbon"><a href="https://github.com/statkclee/sc-shell-kor">Fork me on GitHub</a></span>
 <div class="banner">
   <a href="http://software-carpentry.org/" title="Software Carpentry">
     <img alt="Software Carpentry banner" src="./Introducing the Shell_files/software-carpentry-banner.png">
@@ -34,24 +34,22 @@
         <div class="span10 offset1">
 	  <!-- start content -->
           
-          <h1>Introducing the Shell</h1>
+          <h1>쉘(Shell) 소개</h1>
           
           <div class="objectives">
 
-  <h4 id="objectives">Objectives</h4>
+  <h4 id="objectives">목표</h4>
   <ul>
-    <li>Explain how the shell relates to the keyboard, the screen, the operating system, and users' programs.</li>
-    <li>Explain when and why command-line interfaces should be used instead of graphical interfaces.</li>
+    <li>쉘(shell)이 어떻게 키보드, 화면, 운영체제, 사용자 프로그램에 연관되는지 설명.</li>
+    <li>명령줄(CLI, command-line interface) 인터페이스가 화면 사용자 인터페이스(GUI, graphic user interface)대신에 언제, 왜 사용되어야 하는지 설명.
   </ul>
 
 </div>
 
-<p>Nelle Nemo, a marine biologist,
-has just returned from a six-month survey of the
-<a href="http://en.wikipedia.org/wiki/North_Pacific_Gyre">North Pacific Gyre</a>,
-where she has been sampling gelatinous marine life in the
-<a href="http://en.wikipedia.org/wiki/Great_Pacific_Garbage_Patch">Great Pacific Garbage Patch</a>.
-She has 300 samples in all, and now needs to:</p>
+<p> 해양 생물학자 넬 니모(Nell Nemo) 박사가 방금전 6개월 
+<a href="http://en.wikipedia.org/wiki/North_Pacific_Gyre">북태평양 소용돌이꼴</a> 조사를 마치고 방금 귀환했다.
+<a href="http://en.wikipedia.org/wiki/Great_Pacific_Garbage_Patch">태평양 거대 쓰레기 지대</a>에서 젤리같은 해양생물을 표본주출했다.
+총 합쳐서 거의 300개의 시료가 있고 다음 작업이 필요하다.</p>
 
 <ol>
   <li>Run each sample through an assay machine
