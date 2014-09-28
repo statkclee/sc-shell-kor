@@ -34,72 +34,55 @@
         <div class="span10 offset1">
 	  <!-- start content -->
           
-          <h1>Files and Directories</h1>
+          <h1>파일과 디렉토리</h1>
           
           <div class="objectives">
 
-  <h4 id="objectives">Objectives</h4>
+  <h4 id="objectives">목표</h4>
   <ul>
-    <li>Explain the similarities and differences between a file and a directory.</li>
-    <li>Translate an absolute path into a relative path and vice versa.</li>
-    <li>Construct absolute and relative paths that identify specific files and directories.</li>
-    <li>Explain the steps in the shell's read-run-print cycle.</li>
-    <li>Identify the actual command, flags, and filenames in a command-line call.</li>
-    <li>Demonstrate the use of tab completion, and explain its advantages.</li>
+    <li>파일과 디렉토리의 차이점과 다른점을 설명한다.</li>
+    <li>절대경로를 상대경로로 변환하고 반대로 상대경로를 절대경로로 변환한다.</li>
+    <li>특정 파일과 디렉토리를 확인할 수 있는 절대경로와 상대경로를 구성한다.</li>
+    <li>쉘의 읽기-실행-출력(read-run-print) 주기를 각 단계별로 설명한다.</li>
+    <li>명령 라인 호출에 실제 명령어, 플래그, 파일명을 확인한다.</li>
+    <li>탭 완성기능을 시연하고 장점을 설명한다.</li>
   </ul>
 
 </div>
 
-<p>The part of the operating system responsible for managing files and directories
-is called the <a href="http://software-carpentry.org/v5/gloss.html#filesystem">file system</a>.
-It organizes our data into files,
-which hold information,
-and directories (also called "folders"),
-which hold files or other directories.</p>
+<p> 파일과 디렉토리를 관리를 담당하고 있는 운영체제 부분을 <a href="http://software-carpentry.org/v5/gloss.html#filesystem">파일 시스템(file system)</a>이라고 한다.
+  파일 시스템은 데이터를 정보를 담고 있는 파일과 파일 혹은 다른 디렉토리를 담고 있는 
+  디렉토리(혹은 폴더)로 조직한다.</p>
 
-<p>Several commands are frequently used to create, inspect, rename, and delete files and directories.
-To start exploring them,
-let's open a shell window:</p>
+<p> 파일과 디렉토리를 생성, 검사, 새이름, 삭제하는데 몇가지 명령어가 자주 사용된다.
+  명령어를 살펴보기 위해서 쉘 윈도우를 엽니다. </p>
 
 <pre class="in"><code>$
 </code></pre>
 
-<p>The dollar sign is a <a href="http://software-carpentry.org/v5/gloss.html#prompt">prompt</a>,
-which shows us that the shell is waiting for input;
-your shell may show something more elaborate.</p>
+<p> 달러 기호 ($)는 <a href="http://software-carpentry.org/v5/gloss.html#prompt">프롬프트(prompt)</a>로 쉘이 입력을 기다리는 것을 보여준다. 여러분의 쉴이 좀더 정교한 다른 것을 보여줄수도 있다.</p>
 
-<p>Type the command <code>whoami</code>,
-then press the Enter key (sometimes marked Return) to send the command to the shell.
-The command's output is the ID of the current user,
-i.e.,
-it shows us who the shell thinks we are:</p>
+<p> <code>whoami</code> 명령어를 타이핑하고, 명령을 쉘에 보내기 위해서 엔터키(Enter Key, 종종 키보드에 따라 Return으로 표기도 됨)를 누룹니다. 명령어의 출력은 현재 사용자의 ID가 됩니다. 즉, 쉘이 생각하는 사용자가 누구인지를 보여줍니다.</p>
 
 <pre class="in"><code>$ whoami
 </code></pre>
 <pre class="out"><code>nelle
 </code></pre>
 
-<p>More specifically, when we type <code>whoami</code> the shell:</p>
+<p>좀더 구체적으로, <code>whoami</code>를 타이핑할 때, 쉘은 </p>
 
 <ol>
-  <li>finds a program called <code>whoami</code>,</li>
-  <li>runs that program,</li>
-  <li>displays that program's output, then</li>
-  <li>displays a new prompt to tell us that it's ready for more commands.</li>
+  <li><code>whoami</code> 프로그램을 찾고,</li>
+  <li>프로그램을 실행하고, </li>
+  <li>프로그램 실행 결과를 출력하고, </li>
+  <li>새로운 프롬프트를 화면에 출력해서 더 많은 명령어를 받을 준비가 되어 있음을 알려줍니다.</li>
 </ol>
 
-<p>Next,
-let's find out where we are by running a command called <code>pwd</code>
-(which stands for "print working directory").
-At any moment,
-our <a href="http://software-carpentry.org/v5/gloss.html#current-working-directory">current working directory</a>
-is our current default directory,
-i.e.,
-the directory that the computer assumes we want to run commands in
-unless we explicitly specify something else.
-Here,
-the computer's response is <code>/users/nelle</code>,
-which is Nelle's <a href="http://software-carpentry.org/v5/gloss.html#home-directory">home directory</a>:</p>
+<p> 다음으로 <code>pwd</code> 명령어를 실행하여 지금 어디에 있는지 알아봅시다.
+  <code>pwd</code>는 "print working directory"의 첫 글짜를 땄습니다.
+언제든지 <a href="http://software-carpentry.org/v5/gloss.html#current-working-directory">현재 작업 디렉토리(current working directory)</a>는 현재 디폴트 디렉토리가 된다.
+즉, 명시적으로 다른 곳으로 지정하지 않았다면, 사용자가 명령어를 실행하는 디렉토리가 컴퓨터가 가정하는 디렉토리가 된다.
+다음에서, 컴퓨터의 응답은 <code>/users/nelle</code>으로 넬(Nelle)의 <a href="http://software-carpentry.org/v5/gloss.html#home-directory">홈 디렉토리(home directory)</a>다.</p>
 
 <pre class="in"><code>$ pwd
 </code></pre>
@@ -107,60 +90,41 @@ which is Nelle's <a href="http://software-carpentry.org/v5/gloss.html#home-direc
 </code></pre>
 
 <blockquote>
-  <h4 id="alphabet-soup">Alphabet Soup</h4>
+  <h4 id="alphabet-soup">알파벳 수프 (Alphabet Soup)</h4>
 
-  <p>If the command to find out who we are is <code>whoami</code>, the command to find
-out where we are ought to be called <code>whereami</code>, so why is it <code>pwd</code>
-instead? The usual answer is that in the early 1970s, when Unix was
-first being developed, every keystroke counted: the devices of the day
-were slow, and backspacing on a teletype was so painful that cutting the
-number of keystrokes in order to cut the number of typing mistakes was
-actually a win for usability. The reality is that commands were added to
-Unix one by one, without any master plan, by people who were immersed in
-its jargon. The result is as inconsistent as the roolz uv Inglish
-speling, but we're stuck with it now.</p>
+  <p>사용자가 누구인지를 파악하는데는 <code>whoami</code>가 사용되면, 
+    사용자가 어디 있는지를 파악하는 명령어는 <code>whereami</code>가 되어야 한다.
+    왜 <code>pwd</code>가 대신에 사용될까? 일반적인 대답은 다음과 같다.
+    1970년대 초에 UNIX가 처음 개발되었을 때, 모든 키입력은 카운트되었고, 그시절 장비는 
+    느리고, 텔레타이프의 백스페이스는 너무나도 고생스러워서, 타이핑 오류 숫자를 줄이기 위해서 키입력의 숫자를 줄이는 것이 사용자 편의성(usability)의 진정한 승자가 되었다.
+    현실은 명령어가 종합계획없이 전문어와 은어에 몰입된 사람들에 의해서 유닉스에 하나씩 하나씩 추가되었다. 결과는 일관성이 없지만, 지금 우리는 뗄래야 뗄 수 없는 상태가 되었다.</p>
 </blockquote>
 
-<p>To understand what a "home directory" is,
-let's have a look at how the file system as a whole is organized.
-At the top is the <a href="http://software-carpentry.org/v5/gloss.html#root-directory">root directory</a>
-that holds everything else.
-We refer to it using a slash character <code>/</code> on its own;
-this is the leading slash in <code>/users/nelle</code>.</p>
+<p> "홈 디렉토리(home directory)"를 이해하기 위해서, 파일 시스템이 전체로 어떻게 구성되었는지 살펴보자.
+  최상단에 다른 모든 것을 담고 있는 <a href="http://software-carpentry.org/v5/gloss.html#root-directory">루트 디렉토리(root directory)</a>가 있다.
+  슬래쉬 <code>/</code> 문자로 나타내고, <code>/users/nelle</code>에서 맨 앞에 슬래쉬이기도 하다. </p>
 
-<p>Inside that directory are several other directories:
-<code>bin</code> (which is where some built-in programs are stored),
-<code>data</code> (for miscellaneous data files),
-<code>users</code> (where users' personal directories are located),
-<code>tmp</code> (for temporary files that don't need to be stored long-term),
-and so on:</p>
+<p>홈 디렉토리 안쪽에 몇가지 다른 디렉토리가 있다.  
+<code>bin</code> (몇몇 내장 프로그램이 저장된 디렉토리),
+<code>data</code> (여러가지 데이터 파일이 저장된 디렉토리),
+<code>users</code> (사용자의 개인 디렉토리가 위한 디렉토리),
+<code>tmp</code> (장기간 저장될 필요가 없는 임시 파일을 위한 디렉토리),
+등등. </p>
 
 <p><img src="./Files and Directories_files/filesystem.svg" alt="The Filesystem"></p>
 
-<p>We know that our current working directory <code>/users/nelle</code> is stored inside <code>/users</code>
-because <code>/users</code> is the first part of its name.
-Similarly,
-we know that <code>/users</code> is stored inside the root directory <code>/</code>
-because its name begins with <code>/</code>.</p>
+<p> 현재 작업 디렉토리<code>/users/nelle</code>는 <code>/users</code> 내부에 저장되어 있는데 <code>/users</code>가 이름의 처음 부분이기 때문에 알 수 있다. 마찬가지로 <code>/users</code>는 루트 디렉토리 내부에 저장되어 있는데 이름이 <code>/</code>으로 시작되기 때문이다.</p>
 
-<p>Underneath <code>/users</code>,
-we find one directory for each user with an account on this machine.
-The Mummy's files are stored in <code>/users/imhotep</code>,
-Wolfman's in <code>/users/larry</code>,
-and ours in <code>/users/nelle</code>,
-which is why <code>nelle</code> is the last part of the directory's name.</p>
+<p><code>/users</code> 하단에, 컴퓨터 계정의 각 사용자별 디렉토리를 볼 수 있다. 미이라(Mummy) 파일은 <code>/users/imhotep</code> 디렉토리에 저장되어 있고, 늑대인가(Wolfman)의 파일은 <code>/users/larry</code> 디렉토리에 저장되어 있고 <code>/users/nelle</code> 디렉토리에 <code>nelle</code>의 정보가 저장되어 있는데 이것이 왜 <code>nelle</code>이 디렉토리 이름의 마지막 부분인 이유다.</p>
 
 <p><img src="./Files and Directories_files/home-directories.svg" alt="Home Directories"></p>
 
 <blockquote>
-  <p>Notice that there are two meanings for the <code>/</code> character.
-When it appears at the front of a file or directory name,
-it refers to the root directory. When it appears <em>inside</em> a name,
-it's just a separator.</p>
+  <p>문자 <code>/</code> 에 두가지 의미가 있음을 주목한다. 파일 혹은 디렉토리 이름의 처음에 나타날 때는 루트 디렉토리를 의미한다.
+    이름 <em>중간에</em> 나타날 때는 단지 구분자임을 나타낸다. </p>
 </blockquote>
 
-<p>Let's see what's in Nelle's home directory by running <code>ls</code>,
-which stands for "listing":</p>
+<p> Nelle의 홈 디렉토리에 무엇이 있는지 <code>ls</code> 명령어를 실행해서 살펴보자. <code>ls</code>는 "목록보기(listing)"를 나타낸다.</p>
 
 <pre class="in"><code>$ ls
 </code></pre>
@@ -171,10 +135,9 @@ Desktop    notes.txt           writing
 
 <p><img src="./Files and Directories_files/homedir.svg" alt="Nelle&#39;s Home Directory"></p>
 
-<p><code>ls</code> prints the names of the files and directories in the current directory in alphabetical order,
-arranged neatly into columns.
-We can make its output more comprehensible by using the <a href="http://software-carpentry.org/v5/gloss.html#flag">flag</a> <code>-F</code>,
-which tells <code>ls</code> to add a trailing <code>/</code> to the names of directories:</p>
+<p><code>ls</code>는 알파벳 순서로 깔끔하게 열로 정렬하여 현재 디렉토리의 파일과 디렉토리 이름을 출력한다.
+  <a href="http://software-carpentry.org/v5/gloss.html#flag">플래그(flag)</a> <code>-F</code>를 추가하여 출력을 좀더 포괄적으로 생성할 수 있다.
+  <code>ls</code>으로 하여금 디렉토리 이름 뒤에 <code>/</code>을 추가하게 한다.</p>
 
 <pre class="in"><code>$ ls -F
 </code></pre>
@@ -183,37 +146,22 @@ data/       north-pacific-gyre/  solar.pdf
 Desktop/    notes.txt            writing/
 </code></pre>
 
-<p>Here,
-we can see that <code>/users/nelle</code> contains seven <a href="http://software-carpentry.org/v5/gloss.html#sub-directory">sub-directories</a>.
-The names that don't have trailing slashes,
-like <code>notes.txt</code>, <code>pizza.cfg</code>, and <code>solar.pdf</code>,
-are plain old files.
-And note that there is a space between <code>ls</code> and <code>-F</code>:
-without it,
-the shell thinks we're trying to run a command called <code>ls-F</code>,
-which doesn't exist.</p>
+<p><code>/users/nelle</code> 디렉토리는 7개의 <a href="http://software-carpentry.org/v5/gloss.html#sub-directory">서브 디렉토리(sub-directories)</a>를 담고 있다. 뒤에 슬래쉬를 갖지 않은 이름, 예를 들어 <code>notes.txt</code>, <code>pizza.cfg</code>, <code>solar.pdf</code>은 단순한 파일이다.
+<code>ls</code>과 <code>-F</code> 사이에 공백이 있음을 주목한다. 공백이 없으면 쉘은 존재하지 않는 <code>ls-F</code> 명령어를 실행한다고 생각한다.</p>
 
 <blockquote>
-  <h4 id="whats-in-a-name">What's In A Name?</h4>
+  <h4 id="whats-in-a-name">이름에는 무엇이 있나요?</h4>
 
-  <p>You may have noticed that all of Nelle's files' names are "something dot
-something". This is just a convention: we can call a file <code>mythesis</code> or
-almost anything else we want. However, most people use two-part names
-most of the time to help them (and their programs) tell different kinds
-of files apart. The second part of such a name is called the
-<a href="http://software-carpentry.org/v5/gloss.html#filename-extension">filename extension</a>, and indicates
-what type of data the file holds: <code>.txt</code> signals a plain text file, <code>.pdf</code>
-indicates a PDF document, <code>.cfg</code> is a configuration file full of parameters
-for some program or other, and so on.</p>
+  <p>Nelle의 파일 이름이 "무엇.무엇"으로 된 것을 알아챘을지 모르겠다.
+    이것은 단지 관례다. 파일 이름을 <code>mythesis</code> 혹은 원하는 무엇이든지 지을 수 있다.
+    하지만, 대부분의 사람들은 두 부분으로 구분된 이름을 사용하여 사람이나 프로그램이 다른 종류의 파일임을 구분하도록 돕는다.
+    이름의 두번째 부분은 <a href="http://software-carpentry.org/v5/gloss.html#filename-extension">파일 확장자(filename extension)</a>라고 불리며,
+    파일이 무슨 종류의 데이터를 담고 있는지 나타낸다. <code>.txt</code> 확장자는 텍스트 파일임을, <code>.pdf</code>는 PDF 문서임을, 
+    <code>.cfg</code> 확장자는 어떤 프로그램의 구성정보를 담고 있는 형상관리 파일임을 나타낸다.</p>
 
-  <p>This is just a convention, albeit an important one. Files contain
-bytes: it's up to us and our programs to interpret those bytes
-according to the rules for PDF documents, images, and so on.</p>
+  <p>단지 관습이기는 하지만 중요하다. 파링은 바이트(byte)를 담고 있다. PDF 문서, 이미지, 등등을 규칙에 따라 바이트를 해석하는 것은 우리와 우리의 프로그램에 맡겨졌다.</p>
 
-  <p>Naming a PNG image of a whale as <code>whale.mp3</code> doesn't somehow
-magically turn it into a recording of whalesong, though it <em>might</em>
-cause the operating system to try to open it with a music player
-when someone double-clicks it.</p>
+  <p><code>whale.mp3</code>같은 고래 PNG 이미지의 이름이 고래 노래의 음성파일로 변환되는 마술은 없다. 설사 누군가 두번 클릭할 때, 운영체제가 음악 재생기로 열어 실행할 수는 있지만 작동은 하지 않을 것이다.</p>
 </blockquote>
 
 <p>Now let's take a look at what's in Nelle's <code>data</code> directory by running <code>ls -F data</code>,
