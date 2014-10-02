@@ -2,7 +2,7 @@
 <!-- saved from url=(0064)http://software-carpentry.org/v5/novice/shell/03-pipefilter.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-      <title>Pipes and Filters</title>
+      <title>파이프와 필터</title>
     
     <link rel="shortcut icon" type="image/x-icon" href="http://software-carpentry.org/v5/favicon.ico">
 <link href="http://software-carpentry.org/v5/css/bootstrap/bootstrap.css" rel="stylesheet">
@@ -34,28 +34,23 @@
         <div class="span10 offset1">
 	  <!-- start content -->
           
-          <h1>Pipes and Filters</h1>
+          <h1>파이프와 필터</h1>
           
           <div class="objectives">
 
-  <h4 id="objectives">Objectives</h4>
+  <h4 id="objectives">목표</h4>
   <ul>
-    <li>Redirect a command's output to a file.</li>
-    <li>Process a file instead of keyboard input using redirection.</li>
-    <li>Construct command pipelines with two or more stages.</li>
-    <li>Explain what usually happens if a program or pipeline isn't given any input to process.</li>
-    <li>Explain Unix's "small pieces, loosely joined" philosophy.</li>
+    <li>명령어의 출력결과를 파일로 다시 돌리기</li>
+    <li>키보드 입력 대신에 다시 보내기(redicttion)를 사용하여 파일 처리하기</li>
+    <li>2단계 혹은 3단계를 가진 명령문 구성하기</li>
+    <li>프로그램 혹은 파이프라인에 처리할 입력을 주지 않았을 때 통상 발생하는 일을 설명하기</li>
+    <li>"작은 조각, 느슨하게 결합하기(small pieces, loosely joined)"라는 유닉스 철학을 설명하기</li>
   </ul>
 
 </div>
 
-<p>Now that we know a few basic commands,
-we can finally look at the shell's most powerful feature:
-the ease with which it lets us combine existing programs in new ways.
-We'll start with a directory called <code>molecules</code>
-that contains six files describing some simple organic molecules.
-The <code>.pdb</code> extension indicates that these files are in Protein Data Bank format,
-a simple text format that specifies the type and position of each atom in the molecule.</p>
+<p>몇가지 기초 명령어를 배웠기 때문에 마침내 쉘의 가장 강령한 기능을 살펴볼 수 있다. 새로운 방식으로 존재하는 프로그램을 쉽게 조합할 수 있게 합니다. 간단한 유기분자 설명을 하는 6개 파일을 담고 있는 <code>molecules</code>(분자)라는 디렉토리로 시작한다. 
+<code>.pdb</code> 파일 확장자는 단백질 데이터 뱅크 (Protein Data Bank) 형식으로 분자의 각 원자의 형식과 위치를 표시하는 간단한 텍스트 형식을 나타낸다.</p>
 
 <pre class="in"><code>$ ls molecules
 </code></pre>
@@ -63,11 +58,8 @@ a simple text format that specifies the type and position of each atom in the mo
 octane.pdb    pentane.pdb   propane.pdb
 </code></pre>
 
-<p>Let's go into that directory with <code>cd</code> and run the command <code>wc *.pdb</code>.
-<code>wc</code> is the "word count" command:
-it counts the number of lines, words, and characters in files.
-The <code>*</code> in <code>*.pdb</code> matches zero or more characters,
-so the shell turns <code>*.pdb</code> into a complete list of <code>.pdb</code> files:</p>
+<p>명령어 <code>cd</code>로 디렉토리로 가서 <code>wc *.pdb</code> 명령어를 실행한다. <code>wc</code> 명령어는 "word count"의 축약어로 파일의 라인 수, 단어수, 문자수를 카운트한다.
+<code>*.pdb</code>에서 <code>*</code>은 0 혹은 더 많은 일치하는 문자를 찾는다. 그래서 쉘은 <code>*.pdb</code>을 통해 <code>.pdb</code> 전체 리스트를 반환한다.</p>
 
 <pre class="in"><code>$ cd molecules
 $ wc *.pdb
@@ -82,33 +74,20 @@ $ wc *.pdb
 </code></pre>
 
 <blockquote>
-  <h4 id="wildcards">Wildcards</h4>
+  <h4 id="wildcards">와일드 카드(Wildcards)</h4>
 
-  <p><code>*</code> is a <a href="http://software-carpentry.org/v5/gloss.html#wildcard">wildcard</a>. It matches zero or more
-characters, so <code>*.pdb</code> matches <code>ethane.pdb</code>, <code>propane.pdb</code>, and so on.
-On the other hand, <code>p*.pdb</code> only matches <code>pentane.pdb</code> and
-<code>propane.pdb</code>, because the 'p' at the front only matches itself.</p>
+  <p><code>*</code>는 <a href="http://software-carpentry.org/v5/gloss.html#wildcard">와일드카드(wildcard)</a>다.
+와일드카드는 0 혹은 그 이상의 문자와 일치해서, <code>*.pdb</code>은 <code>ethane.pdb</code>, <code>propane.pdb</code> 등등을 매치하는데 맨 앞에 'p'만 일치하기만 하면 되기 때문이다.</p>
 
-  <p><code>?</code> is also a wildcard, but it only matches a single character. This
-means that <code>p?.pdb</code> matches <code>pi.pdb</code> or <code>p5.pdb</code>, but not <code>propane.pdb</code>.
-We can use any number of wildcards at a time: for example, <code>p*.p?*</code>
-matches anything that starts with a 'p' and ends with '.', 'p', and at
-least one more character (since the '?' has to match one character, and
-the final '*' can match any number of characters). Thus, <code>p*.p?*</code> would
-match <code>preferred.practice</code>, and even <code>p.pi</code> (since the first '*' can
-match no characters at all), but not <code>quality.practice</code> (doesn't start
-with 'p') or <code>preferred.p</code> (there isn't at least one character after the
-'.p').</p>
+  <p><code>?</code>도 또한 와일드카드지만 단지 단일 문자만 매칭한다. 이것이 의미하는 바는 <code>p?.pdb</code>은 <code>pi.pdb</code> 혹은 <code>p5.pdb</code>을 매칭하지만, <code>propane.pdb</code>은 매칭하지 않는다.
+  한번에 원하는 수만큼 와일드카드를 사용할 수 있다. 예를 들어, <code>p*.p?*</code>는 'p'로 시작하고 '.'과 'p', 그리고 최소 한자의 이상의 문자로 끝나는 임의의 문자열을 매칭한다고 표현할 수 있는데 '?'이 한 문자를 매칭해야하고 마지막 '*'은 끝에 임의의 문자숫자와 매칭할 수 있기 때문이다. 그래서 <code>p*.p?*</code>은 <code>preferred.practice</code>과 심지어 <code>p.pi</code>도 매칭한다(첫번째 '*'은 어떤 문자도 매칭할 수가 없음). 하지만 <code>quality.practice</code>은 매칭할 수 없는데 이유는 'p'로 시작하지 않고, <code>preferred.p</code>도 매칭할 수 없는데 'p' 다음에 최소 하나의 문자가 필요한데 없기 때문이다.</p>
 
-  <p>When the shell sees a wildcard, it expands the wildcard to create a
-list of matching filenames <em>before</em> running the command that was
-asked for.  This means that commands like <code>wc</code> and <code>ls</code> never see
-the wildcard characters, just what those wildcards matched. This is
-another example of orthogonal design.</p>
+  <p>쉘이 와일드카드를 봤을 때, 요청된 명령문을 <em>시작하기 전에</em> 와일드카드를 확장하여 매칭할 파일 이름 목록을 생성한다. 
+  <code>wc</code>과 <code>ls</code> 명령어는 결코 와일드카드 문자를 보지 못하고 단지 와일드카드가 매칭하는 것만을 보게된다.
+  이것은 직교 설계(orthogonal design)의 또 다른 사례이다.</p>
 </blockquote>
 
-<p>If we run <code>wc -l</code> instead of just <code>wc</code>,
-the output shows only the number of lines per file:</p>
+<p><code>wc</code> 대신에 <code>wc -l</code>을 실행하면, 출력결과는 파일마다 행수만을 보여준다.</p>
 
 <pre class="in"><code>$ wc -l *.pdb
 </code></pre>
@@ -121,35 +100,23 @@ the output shows only the number of lines per file:</p>
  107  total
 </code></pre>
 
-<p>We can also use <code>-w</code> to get only the number of words,
-or <code>-c</code> to get only the number of characters.</p>
+<p>단어 숫자만을 얻기 위해서 <code>-w</code>, 문자 숫자만을 얻기 위해서 <code>-c</code>을 사용할 수 있다.</p>
 
-<p>Which of these files is shortest?
-It's an easy question to answer when there are only six files,
-but what if there were 6000?
-Our first step toward a solution is to run the command:</p>
+<p>파일 중에서 어느 파일이 가장 짧을까요? 단지 6개의 파일이 있기 때문에 질문에 답하기는 쉬울 것이다. 하지만 만약에 6000 파일이 있다면 어떨까요?
+  해결에 이르는 첫번째 단계는 다음 명령을 실행하는 것이다.</p>
 
 <pre class="in"><code>$ wc -l *.pdb &gt; lengths
 </code></pre>
 
-<p>The <code>&gt;</code> tells the shell to <a href="http://software-carpentry.org/v5/gloss.html#redirect">redirect</a> the command's output
-to a file instead of printing it to the screen.
-The shell will create the file if it doesn't exist,
-or overwrite the contents of that file if it does.
-(This is why there is no screen output:
-everything that <code>wc</code> would have printed has gone into the file <code>lengths</code> instead.)
-<code>ls lengths</code> confirms that the file exists:</p>
+<p> <code>&gt;</code> 은 쉘로 하여금 화면에 처리 결과를 뿌리는 대신에 파일로 <a href="http://software-carpentry.org/v5/gloss.html#redirect">되돌리기(redirect)</a>게 한다.
+  만약 파일이 존재하지 않으면 파일을 생성하고 파일이 존재하면 파일의 내용을 덮어쓰기 한다. (이것이 왜 화면에 출력결과가 없는 이유다. <code>wc</code>이 출력하는 모든 것은 <code>lengths</code> 파일에 대신 들어간다.)  <code>ls lengths</code> 을 통해 파일이 존재하는 것을 확인한다.</p>
 
 <pre class="in"><code>$ ls lengths
 </code></pre>
 <pre class="out"><code>lengths
 </code></pre>
 
-<p>We can now send the content of <code>lengths</code> to the screen using <code>cat lengths</code>.
-<code>cat</code> stands for "concatenate":
-it prints the contents of files one after another.
-There's only one file in this case,
-so <code>cat</code> just shows us what it contains:</p>
+<p> <code>cat lengths</code>을 사용해서 화면에 <code>lengths</code>의 내용을 보낼 수 있다. <code>cat</code>은 "concatenate"를 줄인 것이고 하나씩 하나씩 파일의 내용을 출력한다. 이번 사례에는 단지 하나의 파일이 있어서 <code>cat</code>는 단지 한 파일이 담고 있는 내용만을 보여준다.</p>
 
 <pre class="in"><code>$ cat lengths
 </code></pre>
@@ -162,11 +129,8 @@ so <code>cat</code> just shows us what it contains:</p>
  107  total
 </code></pre>
 
-<p>Now let's use the <code>sort</code> command to sort its contents.
-We will also use the -n flag to specify that the sort is 
-numerical instead of alphabetical.
-This does <em>not</em> change the file;
-instead, it sends the sorted result to the screen:</p>
+<p> <code>sort</code> 명령어를 사용해서 파일 내용을 정렬합니다.
+  '-n' 옵션을 사용해서 알파벳 대신에 숫자 방식으로 정렬할 것임을 표시한다. 이 명령어는 파일 자체를 변경하지 않고 대신에 정렬된 결과를 화면으로 보낸다.</p>
 
 <pre class="in"><code>$ sort -n lengths
 </code></pre>
@@ -179,11 +143,8 @@ instead, it sends the sorted result to the screen:</p>
 107  total
 </code></pre>
 
-<p>We can put the sorted list of lines in another temporary file called <code>sorted-lengths</code>
-by putting <code>&gt; sorted-lengths</code> after the command,
-just as we used <code>&gt; lengths</code> to put the output of <code>wc</code> into <code>lengths</code>.
-Once we've done that,
-we can run another command called <code>head</code> to get the first few lines in <code>sorted-lengths</code>:</p>
+<p> <code>&gt; lengths</code>을 사용해서 <code>wc</code> 실행결과를 <code>lengths</code>에 넣었듯이, 명령문 다음에 <code>&gt; sorted-lengths</code>을 넣음으로서 임시 파일이름인 <code>sorted-lengths</code>에 정렬된 목록 라인을 담을 수 있다.
+이것을 실행한 다음에, 또 다른 <code>head</code> 명령어를 실행해서 <code>sorted-lengths</code>에서 첫 몇 행을 뽑아낼 수 있다.</p>
 
 <pre class="in"><code>$ sort -n lengths &gt; sorted-lengths
 $ head -1 sorted-lengths
@@ -191,127 +152,64 @@ $ head -1 sorted-lengths
 <pre class="out"><code>  9  methane.pdb
 </code></pre>
 
-<p>Using the parameter <code>-1</code> with <code>head</code> tells it that
-we only want the first line of the file;
-<code>-20</code> would get the first 20,
-and so on.
-Since <code>sorted-lengths</code> contains the lengths of our files ordered from least to greatest,
-the output of <code>head</code> must be the file with the fewest lines.</p>
+<p><code>head</code>에 <code>-1</code> 매개변수를 사용해서 파일의 첫번째 행만이 필요하다고 지정한다. <code>-20</code>은 처음 20개 행만을 지정한다. <code>sorted-lengths</code>이 가장 작은 것에서부터 큰 것으로 정렬된 파일 길이 정보를 담고 있어서, <code>head</code>의 출력 결과는 가장 짧은 행을 가진 파일이 되어야만 한다.</p>
 
-<p>If you think this is confusing,
-you're in good company:
-even once you understand what <code>wc</code>, <code>sort</code>, and <code>head</code> do,
-all those intermediate files make it hard to follow what's going on.
-We can make it easier to understand by running <code>sort</code> and <code>head</code> together:</p>
+<p> 이것이 혼란스럽다고 생각한다면, 여러분은 정말 좋은 회사에 있다. 
+<code>wc</code>, <code>sort</code>, <code>head</code> 멸영어가 무엇을 수행하는지 이해해도, 중간에 산출되는 파일은 무엇이 진행되고 있는지 따라가기가 쉽지 않다. <code>sort</code>과 <code>head</code>을 함께 실행해서 이해하기 훨씬 쉽게 할 수 있다.</p>
 
 <pre class="in"><code>$ sort -n lengths | head -1
 </code></pre>
 <pre class="out"><code>  9  methane.pdb
 </code></pre>
 
-<p>The vertical bar between the two commands is called a <a href="http://software-carpentry.org/v5/gloss.html#pipe">pipe</a>.
-It tells the shell that we want to use
-the output of the command on the left
-as the input to the command on the right.
-The computer might create a temporary file if it needs to,
-or copy data from one program to the other in memory,
-or something else entirely;
-we don't have to know or care.</p>
+<p>두 명령문 사이의 수직 막대를 <a href="http://software-carpentry.org/v5/gloss.html#pipe">파이프(pipe)</a>라고 부른다. 수직막대는 쉘에게 왼편의 명령문의 출력결과를 오른쪽 명령문의 입력값을 사용한다고 한다고 말을 전한다. 컴퓨터는 필요하면 임시 파일을 생성하거나 한 프로그램에서 주 기억장치의 다른 프로그램으로 데이터를 복사하거나 혹은 완전히 다른 작업을 수행한다. 사용자는 알 필요도 없고 관심을 가질 이유도 없다.</p>
 
-<p>We can use another pipe to send the output of <code>wc</code> directly to <code>sort</code>,
-which then sends its output to <code>head</code>:</p>
+<p>또 다른 파이프를 사용해서 <code>wc</code>의 출력결과를 <code>sort</code>에 바로 보내고 나서 다시 처리 결과를 <code>head</code>에 보낸다.</p>
 
 <pre class="in"><code>$ wc -l *.pdb | sort -n | head -1
 </code></pre>
 <pre class="out"><code>  9  methane.pdb
 </code></pre>
 
-<p>This is exactly like a mathematician nesting functions like <em>sin(πx)<sup>2</sup></em>
-and saying "the square of the sine of <em>x</em> times π".
-In our case,
-the calculation is "head of sort of line count of <code>*.pdb</code>".</p>
+<p>이것이 정확하게 수학자가 <em>sin(πx)<sup>2</sup></em>같은 
+중첩함수를 사용하는 것과 같다. <em>sin(πx)<sup>2</sup></em>은
+<em>x</em> 곱하기 π의 사인 제곱과 같다. 우리의 경우는 "<code>*.pdb</code>의 행수를 세어서 정렬의 첫 부분을 계산하는 것이다.</p>
 
-<p>Here's what actually happens behind the scenes when we create a pipe.
-When a computer runs a program—any program—it creates a <a href="http://software-carpentry.org/v5/gloss.html#process">process</a>
-in memory to hold the program's software and its current state.
-Every process has an input channel called <a href="http://software-carpentry.org/v5/gloss.html#standard-input">standard input</a>.
-(By this point, you may be surprised that the name is so memorable, but don't worry:
-most Unix programmers call it "stdin".
-Every process also has a default output channel called <a href="http://software-carpentry.org/v5/gloss.html#standard-output">standard output</a>
-(or "stdout").</p>
+<p>파이프를 생성할 때 뒤에서 실질적으로 일어나는 일은 다음과 같다. 컴퓨터가 프로그램을 실행할 때 프로그램의 소프트웨어와 현재 상태 정보를 담기 위해서 주기억장치 메모리에 <a href="http://software-carpentry.org/v5/gloss.html#process">프로세스(process)</a>를 생성한다. 모든 프로세스는 <a href="http://software-carpentry.org/v5/gloss.html#standard-input">표준 입력(standard input)</a>이라는 입력 채널을 가지고 있다. (여기서 이름이 너무 기억하기 좋아서 놀랄지도 모른다. 하지만 걱정하지 마세요. 대부분의 유닉스 프로그래머는 "stdin"이라고 부른다.) 또한 모든 프로세스는 <a href="http://software-carpentry.org/v5/gloss.html#standard-output">표준 출력(standard output)</a> (혹은 "stdout")라고 불리는 디폴트 출력 채널이 있다.</p>
 
-<p>The shell is actually just another program.
-Under normal circumstances,
-whatever we type on the keyboard is sent to the shell on its standard input,
-and whatever it produces on standard output is displayed on our screen.
-When we tell the shell to run a program,
-it creates a new process
-and temporarily sends whatever we type on our keyboard to that process's standard input,
-and whatever the process sends to standard output to the screen.</p>
+<p>쉘은 실질적으로 또다른 프로그램이다. 정상적인 상황에서 사용자가 키보드로 무엇을 타이핑하는 모든 것은 표준 입력으로 쉘에 보내지고, 표준 출력에서 만들어지는 무엇이든지 화면에 출력된다. 쉘에게 프로그램을 실행하게 할때, 새로운 프로게스를 생성하고 임시적으로 키보드에 타이핑하는 무엇이든지 그 프로세스의 표준 입력으로 보내지고, 프로세스는 표준 출력에 무엇이든지 화면에 전송한다.</p>
 
-<p>Here's what happens when we run <code>wc -l *.pdb &gt; lengths</code>.
-The shell starts by telling the computer to create a new process to run the <code>wc</code> program.
-Since we've provided some filenames as parameters,
-<code>wc</code> reads from them instead of from standard input.
-And since we've used <code>&gt;</code> to redirect output to a file,
-the shell connects the process's standard output to that file.</p>
+<p><code>wc -l *.pdb &gt; lengths</code>을 실행할 때 여기 일어나는 것을 설명하면 다음과 같다. <code>wc</code> 프로그램을 실행할 
+새로운 프로세스를 생성하라고 컴퓨터에 말하면서 쉘은 시작한다.
+파일이름을 매개변수로 제공했기 때문에 표준 입력 대신에 <code>wc</code>는 매개변수에서 입력값을 읽어온다. <code>&gt;</code>을 사용해서 출력값을 파일에 되돌리는데 사용했기 때문에, 쉘은 프로세스의 표준 출력결과를 파일에 연결한다.</p>
 
-<p>If we run <code>wc -l *.pdb | sort -n</code> instead,
-the shell creates two processes
-(one for each process in the pipe)
-so that <code>wc</code> and <code>sort</code> run simultaneously.
-The standard output of <code>wc</code> is fed directly to the standard input of <code>sort</code>;
-since there's no redirection with <code>&gt;</code>,
-<code>sort</code>'s output goes to the screen.
-And if we run <code>wc -l *.pdb | sort -n | head -1</code>,
-we get three processes with data flowing from the files,
-through <code>wc</code> to <code>sort</code>,
-and from <code>sort</code> through <code>head</code> to the screen.</p>
+<p> <code>wc -l *.pdb | sort -n</code>을 실행한다면, 쉘은 
+두개의 프로세스를 생성한다. (파이프의 각 프로세스에 대해서 하나씩) 그래서 
+<code>wc</code>과 <code>sort</code>은 동시에 실행된다.
+<code>wc</code>의 표준 출력은 직접적으로 <code>sort</code>의 표준 입력으로 들어간다. <code>&gt;</code>같은 되돌리기가 없기 때문에 
+<code>sort</code>의 출력은 화면으로 나가게 된다. 
+<code>wc -l *.pdb | sort -n | head -1</code>을 실행하면, 파일에서 <code>wc</code>에서 <code>sort</code>으로, <code>sort</code>에서 <code>head</code>을 통해 화면으로 나가게 되는 데이터 흐름을 가진 3개의 프로세스가 있다.</p>
 
-<p>This simple idea is why Unix has been so successful.
-Instead of creating enormous programs that try to do many different things,
-Unix programmers focus on creating lots of simple tools that each do one job well,
-and that work well with each other.
-This programming model is called <a href="http://software-carpentry.org/v5/gloss.html#pipe-and-filter">pipes and filters</a>.
-We've already seen pipes;
-a <a href="http://software-carpentry.org/v5/gloss.html#filter">filter</a> is a program like <code>wc</code> or <code>sort</code>
-that transforms a stream of input into a stream of output.
-Almost all of the standard Unix tools can work this way:
-unless told to do otherwise,
-they read from standard input,
-do something with what they've read,
-and write to standard output.</p>
+<p>이 간단한 아이디어가 왜 유닉스가 그토록 성공적이었는지를 보여준다. 많은 다른 작업을 수행하는 거대한 프로그램을 생성하는 대신에 유닉스 프로그래머는 각자가 한가지 작업만을 잘 수행하는 많은 간단한 툴을 생성하는데 집중하고 서로간에 유지적으로 잘 작동하게 한다. 이러한 프로그래밍 모델을 <a href="http://software-carpentry.org/v5/gloss.html#pipe-and-filter">파이프와 필터(pipes and filters)</a>라고 부른다. 파이프는 이미 살펴봤고, <a href="http://software-carpentry.org/v5/gloss.html#filter">필터(filter)</a>는 <code>wc</code>, <code>sort</code>같은 프로그램으로 입력 스트림을 출력 스트림으로 변환하는 것이다. 거의 모든 표준 유닉스 툴은 이런 방식으로 동작한다. 별도로 언급되지 않는다면, 표준 입력에서 읽고 읽은 것을 가지고 무언가를 수행하고 표준 출력에 쓴다.</p>
 
-<p>The key is that any program that reads lines of text from standard input
-and writes lines of text to standard output
-can be combined with every other program that behaves this way as well.
-You can <em>and should</em> write your programs this way
-so that you and other people can put those programs into pipes to multiply their power.</p>
+<p>중요한 점은 표준입력에서 텍스트 행을 읽고 표준 출력에 텍스트 행을 쓰는 임의의 프로그램은 이런 방식으로 행동하는 모든 다른 프로그램과 조합될 수 있다는 것이다. 여러분도 여러분이 작성한 프로그램을 이러한 방식으로 작성할 수 있어야 하고 <em>작성해야 한다.</em> 그래서 여러분과 다른 사람들이 이러한 프로그램을 파이프에 넣어서 프로그램의 힘을 배가할 수 있다.</p>
 
 <blockquote>
-  <h4 id="redirecting-input">Redirecting Input</h4>
+  <h4 id="redirecting-input">입력 되돌리기</h4>
 
-  <p>As well as using <code>&gt;</code> to redirect a program's output, we can use <code>&lt;</code> to
-redirect its input, i.e., to read from a file instead of from standard
-input. For example, instead of writing <code>wc ammonia.pdb</code>, we could write
-<code>wc &lt; ammonia.pdb</code>. In the first case, <code>wc</code> gets a command line
-parameter telling it what file to open. In the second, <code>wc</code> doesn't have
-any command line parameters, so it reads from standard input, but we
-have told the shell to send the contents of <code>ammonia.pdb</code> to <code>wc</code>'s
-standard input.</p>
+  <p>프로그램의 출력 결과를 되돌리기 위해서 <code>&gt;</code>을 사용하는 것과 마찬가지로 <code>&lt;</code>을 사용해서 입력을 되돌릴 수도 있다. 즉, 표준 입력 대신에 파일로 부터 읽을 수 있다.
+  예를 들어, 첫째 사례로, <code>wc</code>는 무슨 파일을 여는지를 명령 라인의 매개변수에서 얻는다. 두번째 사례는, <code>wc</code>가 명령 라인 매개변수가 없다. 그래서 표준 입력에서 읽지만, 쉘에게 <code>ammonia.pdb</code>의 내용을 <code>wc</code>에 표준 입력으로 보내라고 했다.</p>
 </blockquote>
 
-<h3 id="nelles-pipeline-checking-files">Nelle's Pipeline: Checking Files</h3>
+<h3 id="nelles-pipeline-checking-files">Nelle의 파이프라인 Pipeline: 파일 확인하기</h3>
 
-<p>Nelle has run her samples through the assay machines
-and created 1520 files in the <code>north-pacific-gyre/2012-07-03</code> directory described earlier.
-As a quick sanity check, she types:</p>
+<p>앞에서 설명한 것 처럼 Nelle은 분석기를 통해 시료를 시험해서 1520개 파일을 <code>north-pacific-gyre/2012-07-03</code> 디렉토리에 생성했다. 빠르게 건정성 확인하기 위해서 다음과 같이 타이핑한다.</p>
 
 <pre class="in"><code>$ cd north-pacific-gyre/2012-07-03
 $ wc -l *.txt
 </code></pre>
 
-<p>The output is 1520 lines that look like this:</p>
+<p>결과는 다음과 같은 1520 행이 출력된다.</p>
 
 <pre class="out"><code>300 NENE01729A.txt
 300 NENE01729B.txt
@@ -322,7 +220,7 @@ $ wc -l *.txt
 ... ...
 </code></pre>
 
-<p>Now she types this:</p>
+<p>이번에는 다음과 같이 타이핑한다.</p>
 
 <pre class="in"><code>$ wc -l *.txt | sort -n | head -5
 </code></pre>
@@ -333,13 +231,7 @@ $ wc -l *.txt
  300 NENE01751A.txt
 </code></pre>
 
-<p>Whoops: one of the files is 60 lines shorter than the others.
-When she goes back and checks it,
-she sees that she did that assay at 8:00 on a Monday morning—someone
-was probably in using the machine on the weekend,
-and she forgot to reset it.
-Before re-running that sample,
-she checks to see if any files have too much data:</p>
+<p>이런, 파일중에 하나가 다른 것보다 60행이 짧다. 다시 돌아가서 확인하면, 월요일 아침 8:00 시각에 분석을 수행한 것을 알고 있다. 아마도 누군가 주말에 누군가 기계를 사용했고, 다시 돌려놓는 것을 깜빡 잊었다. 시료를 다시 시험하기 전에 파일중에 너무 큰 데이터가 있는지를 확인한다.</p>
 
 <pre class="in"><code>$ wc -l *.txt | sort -n | tail -5
 </code></pre>
@@ -350,43 +242,28 @@ she checks to see if any files have too much data:</p>
  300 NENE02043B.txt
 </code></pre>
 
-<p>Those numbers look good—but what's that 'Z' doing there in the third-to-last line?
-All of her samples should be marked 'A' or 'B';
-by convention,
-her lab uses 'Z' to indicate samples with missing information.
-To find others like it, she does this:</p>
+<p> 숫자는 좋아 보인다. 하지만 끝에서 세번째 줄에 'Z'는 무엇일까? 모든 시료는 'A' 혹은 'B'로 표시되어야 한다. 시험실 관례로 'Z'는 결측치가 있는 시료를 표식하기 위해 사용된다. 더 많은 결측 시료를 찾기 위해서 다음과 같이 타이핑한다.</p>
 
 <pre class="in"><code>$ ls *Z.txt
 </code></pre>
 <pre class="out"><code>NENE01971Z.txt    NENE02040Z.txt
 </code></pre>
 
-<p>Sure enough,
-when she checks the log on her laptop,
-there's no depth recorded for either of those samples.
-Since it's too late to get the information any other way,
-she must exclude those two files from her analysis.
-She could just delete them using <code>rm</code>,
-but there are actually some analyses she might do later where depth doesn't matter,
-so instead, she'll just be careful later on to select files using the wildcard expression <code>*[AB].txt</code>.
-As always,
-the '*' matches any number of characters;
-the expression <code>[AB]</code> matches either an 'A' or a 'B',
-so this matches all the valid data files she has.</p>
+<p>노트북의 로그 이력을 확인할 때, 상기 샘플 각각에 대해 깊이(depth) 정보에 대해서 기록된 것이 없다. 다른 방법으로 정보를 더 수집하기에는 너무 늦어서, 분석에서 두 파일을 제외하기로 했다. <code>rm</code> 명령어를 사용하여 삭제할 수 있지만, 향후에 깊이(depth)정보가 관련없는 다른 분석을 실시할 수도 있다. 그래서 와일드 카드 표현식 <code>*[AB].txt</code>을 사용하여 파일을 조심해서 선택하기로 한다. 언제나 그렇듯이, '*'는 임의 숫자의 문자를 매칭한다. <code>[AB]</code> 표현식은 'A'혹은 'B'를 매칭해서 Nelle이 가지고 있는 유효한 데이터 파일 모두를 매칭한다.</p>
 
 <div class="keypoints">
 
-  <h4 id="key-points">Key Points</h4>
+  <h4 id="key-points">주요점</h4>
   <ul>
-    <li><code>command &gt; file</code> redirects a command's output to a file.</li>
-    <li><code>first | second</code> is a pipeline: the output of the first command is used as the input to the second.</li>
-    <li>The best way to use the shell is to use pipes to combine simple single-purpose programs (filters).</li>
+    <li><code>명령어 &gt; 파일</code> (<code>command &gt; file</code>)은 명령어의 출력을 파일로 되돌린다.</li>
+    <li><code>첫째_명령어 | 둘째_명령어</code>(<code>first | second</code>)는 파이프라인이다. 첫째_명령어 출력은 둘째_명령어의 입력으로 사용된다.</li>
+    <li>쉘을 사용하는 가장 좋은 방법은 파이프를 사용해서 간단한 단일 목적 프로그램(필터)을 조합하는 것이다.</li>
   </ul>
 
 </div>
 
 <div class="challenge">
-  <p>If we run <code>sort</code> on this file:</p>
+  <p>파일에 <code>sort</code>를 실행하면,</p>
 
   <pre><code>10
 2
@@ -395,7 +272,7 @@ so this matches all the valid data files she has.</p>
 6
 </code></pre>
 
-  <p>the output is:</p>
+  <p>출력은 다음과 같다.</p>
 
   <pre><code>10
 19
@@ -404,7 +281,7 @@ so this matches all the valid data files she has.</p>
 6
 </code></pre>
 
-  <p>If we run <code>sort -n</code> on the same input, we get this instead:</p>
+  <p>동일한 입력에 <code>sort -n</code>을 실행하면, 대신에 다음을 얻게된다.</p>
 
   <pre><code>2
 6
@@ -413,24 +290,23 @@ so this matches all the valid data files she has.</p>
 22
 </code></pre>
 
-  <p>Explain why <code>-n</code> has this effect.</p>
+  <p>인수 <code>-n</code>가 왜 이런 효과를 가지는지 설명하세요.</p>
 </div>
 
 <div class="challenge">
-  <p>What is the difference between:</p>
+  <p>다음 명령문과 </p>
 
   <pre><code>wc -l &lt; mydata.dat
 </code></pre>
 
-  <p>and:</p>
+  <p>다음 명령문의 차이점은 무엇인지 설명하세요.</p>
 
   <pre><code>wc -l mydata.dat
 </code></pre>
 </div>
 
 <div class="challenge">
-  <p>The command <code>uniq</code> removes adjacent duplicated lines from its input.
-For example, if a file <code>salmon.txt</code> contains:</p>
+  <p> 명령문 <code>uniq</code>은 입력으로부터 인접한 중복된 행을 제거한다. 예를 들어, <code>salmon.txt</code> 파일이 다음을 포함한다면,</p>
 
   <pre><code>coho
 coho
@@ -440,7 +316,7 @@ steelhead
 steelhead
 </code></pre>
 
-  <p>then <code>uniq salmon.txt</code> produces:</p>
+  <p> <code>uniq salmon.txt</code> 명령문 실행은 다음을 출력한다.</p>
 
   <pre><code>coho
 steelhead
@@ -448,13 +324,11 @@ coho
 steelhead
 </code></pre>
 
-  <p>Why do you think <code>uniq</code> only removes <em>adjacent</em> duplicated lines?
-(Hint: think about very large data sets.) What other command could
-you combine with it in a pipe to remove all duplicated lines?</p>
+  <p><code>uniq</code>가 왜 인접한 중복 행만을 단지 제거한다고 생각합니까? (힌트: 매우 큰 파일을 생각해보세요.) 모든 중복된 행을 제거하기 위해서 파이프로 무슨 다른 명령어를 조합할 수 있을까요?</p>
 </div>
 
 <div class="challenge">
-  <p>A file called <code>animals.txt</code> contains the following data:</p>
+  <p><code>animals.txt</code>로 불리는 파일은 다음 데이터를 포함한다.</p>
 
   <pre><code>2012-11-05,deer
 2012-11-05,rabbit
@@ -466,19 +340,19 @@ you combine with it in a pipe to remove all duplicated lines?</p>
 2012-11-07,bear
 </code></pre>
 
-  <p>What text passes through each of the pipes and the final redirect in the pipeline below?</p>
+  <p>다음 아래 파이프라인에 각 파이프를 통과하고 마지막 되돌리기를 마친  텍스트는 무엇일까요?</p>
 
   <pre><code>cat animals.txt | head -5 | tail -3 | sort -r &gt; final.txt
 </code></pre>
 </div>
 
 <div class="challenge">
-  <p>The command:</p>
+  <p>다음 명령문을 실행하면,</p>
 
   <pre><code>$ cut -d , -f 2 animals.txt
 </code></pre>
 
-  <p>produces the following output:</p>
+  <p>다음 출력결과를 만들어 낸다.</p>
 
   <pre><code>deer
 rabbit
@@ -490,9 +364,7 @@ rabbit
 bear
 </code></pre>
 
-  <p>What other command(s) could be added to this in a pipeline to find
-out what animals the file contains (without any duplicates in their
-names)?</p>
+  <p>파일이 담고 있는 동물이 무엇인지를 알아내기 위해서 무슨 다른 명령어가 파이프라인에 추가되어야 하나요? (동물 이름에 어떠한 중복도 없어야 합니다.)</p>
 </div>
 
 	  <!-- end content -->
